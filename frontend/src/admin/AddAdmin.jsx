@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const AddAdmin = ({ onClose, onAdminAdded }) => {
+const AddAdmin = ({ onClose, onAdminAdded, currentUserRole }) => {
     const [formData, setFormData] = useState({
         username: '',
         fullname: '',
@@ -55,12 +55,12 @@ const AddAdmin = ({ onClose, onAdminAdded }) => {
                 password: '',
                 confirmPassword: ''
             });
-            
+
             // Notify parent component
             if (onAdminAdded) {
                 onAdminAdded();
             }
-            
+
             // Close popup after 2 seconds
             setTimeout(() => {
                 onClose();
@@ -165,9 +165,15 @@ const AddAdmin = ({ onClose, onAdminAdded }) => {
                                 className="w-full h-[37px] px-[15px] rounded-[5px] border border-[#FFB300] bg-[#FF9900] text-white focus:outline-none"
                             >
                                 <option value="">Select Admin Type</option>
-                                <option value="super admin">Super Admin</option>
-                                <option value="admin">Admin</option>
-                                <option value="editor">Editor</option>
+                                {(currentUserRole === 'super admin') && (
+                                    <>
+                                        <option value="super admin">Super Admin</option>
+                                        <option value="admin">Admin</option>
+                                    </>
+                                )}
+                                {(currentUserRole === 'super admin' || currentUserRole === 'admin') && (
+                                    <option value="editor">Editor</option>
+                                )}
                             </select>
                         </div>
 

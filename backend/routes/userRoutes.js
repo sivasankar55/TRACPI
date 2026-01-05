@@ -1,12 +1,15 @@
 import express from 'express';
-import { 
-  googleAuth, 
+import {
+  googleAuth,
   googleAuthCallback,
   getCurrentUser,
-  getUserProfile, 
-  updateUser, 
-  deleteUser, 
-  getAllUsers 
+  getUserProfile,
+  updateUser,
+  deleteUser,
+  getAllUsers,
+  suspendUser,
+  addUser,
+  getUserFullDetails
 } from '../controllers/userController.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { requireAdminAuth } from '../controllers/adminController.js';
@@ -25,11 +28,14 @@ router.get('/google/callback', googleAuthCallback);
 router.get('/profile/:id', getUserProfile);
 
 // Protected routes (require authentication)
-router.get('/me',authenticateToken, getCurrentUser);
+router.get('/me', authenticateToken, getCurrentUser);
 router.put('/:id', authenticateToken, updateUser);
 router.delete('/:id', requireAdminAuth, deleteUser);
+router.post('/:id/suspend', requireAdminAuth, suspendUser);
 
 // Admin routes (require authentication)
 router.get('/', requireAdminAuth, getAllUsers);
+router.post('/add', requireAdminAuth, addUser);
+router.get('/:id/details', requireAdminAuth, getUserFullDetails);
 
 export default router; 

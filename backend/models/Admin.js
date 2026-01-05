@@ -24,6 +24,11 @@ const AdminSchema = new mongoose.Schema({
     enum: ['admin', 'super admin', 'editor'],
     required: true
   },
+  phoneNumber: {
+    type: String,
+    trim: true,
+    default: ''
+  },
   lastLogin: {
     type: Date,
     default: null
@@ -31,6 +36,15 @@ const AdminSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
+  },
+  status: {
+    type: String,
+    enum: ['active', 'suspended'],
+    default: 'active'
+  },
+  suspendedUntil: {
+    type: Date,
+    default: null
   }
 }, { timestamps: true });
 

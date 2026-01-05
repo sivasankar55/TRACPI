@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { AdminAuthContext } from '../context/AdminAuthContext';
 import { MdDashboard } from 'react-icons/md';
 import {
   FaUserCog,
@@ -10,150 +11,137 @@ import {
   FaUser,
   FaCog,
   FaSignOutAlt,
+  FaWpforms,
 } from 'react-icons/fa';
 
 import Logo from '../assets/targetpi logo.png'; // adjust if file is in different folder
 
 const HeaderC = () => {
   const location = useLocation();
+  const { logout } = useContext(AdminAuthContext);
+
+  const isCourseActive = location.pathname.startsWith('/admin/course-management') || location.pathname.startsWith('/admin/add-course');
+  const isUserManagementActive = location.pathname.startsWith('/admin/user-management');
+
+  const navItems = [
+    { icon: <MdDashboard size={22} />, label: 'Dashboard', path: '/admin-dashboard', isStatic: true },
+    { icon: <FaUserCog size={22} />, label: 'Admin Management', path: '/admin/admin-management' },
+    { icon: <FaUsers size={22} />, label: 'User Management', path: '/admin/user-management' },
+    { icon: <FaChalkboardTeacher size={22} />, label: 'Course Management', path: '/admin/course-management' },
+    { icon: <FaChartBar size={22} />, label: 'Progress Tracking', path: '/admin/progress-tracking' },
+    { icon: <FaWpforms size={22} />, label: 'Form Management', path: '/admin/form-management' },
+    { icon: <FaCommentDots size={22} />, label: 'Feedback', path: '/feedback' },
+  ];
+
+  const bottomItems = [
+    { icon: <FaUser size={20} />, label: 'Profile', path: '/admin/profile' },
+    { icon: <FaCog size={20} />, label: 'Settings', path: '/admin/settings' },
+    { icon: <FaSignOutAlt size={20} />, label: 'Log Out', action: logout },
+  ];
 
   return (
-    <div className="flex font-[Poppins] h-[960px]">
-      {/* Sidebar */}
-      <div className="w-[315px] h-[960px] bg-[#FFF0CE] border-r-[2px] border-[#FF9D00] rounded-tr-[20px] rounded-br-[20px] pt-[40px] flex flex-col gap-[54px] overflow-hidden">
-        {/* Logo */}
-        <div className="flex justify-center">
-          <img src={Logo} alt="Logo" className="w-[108.8px] h-[64px]" />
-        </div>
+    <div className="w-[315px] h-screen sticky top-0 bg-[#FFF3D0] flex flex-col pt-12 font-['Poppins'] flex-shrink-0">
+      {/* Logo */}
+      <div className="flex justify-center mb-16">
+        <img src={Logo} alt="TrackPi" className="w-[110px] h-auto object-contain" />
+      </div>
 
-        {/* Main Nav Links */}
-        <div className="flex flex-col gap-[20px] px-4">
-          {/* Dashboard */}
-          <Link
-            to="/admin-dashboard"
-            className={`flex items-center gap-[15px] px-[43px] py-[10px] h-[44px] rounded-[18px] cursor-pointer ${location.pathname === '/admin-dashboard'
-              ? 'bg-[#FFB300]'
-              : 'hover:bg-[#FFE29D]'
-              }`}
-          >
-            <MdDashboard className="w-[24px] h-[24px] text-[#0A0A0A]" />
-            <span className="text-[#0A0A0A] text-[16px] font-[400] tracking-[0.02em] leading-[100%]">
-              Dashboard
-            </span>
-          </Link>
+      {/* Main Nav Links */}
+      <div className="flex flex-col gap-2 px-6 flex-1">
+        {navItems.map((item) => {
+          const isActive = (item.path === '/admin/user-management' && isUserManagementActive) ||
+            (item.path !== '/admin/user-management' && location.pathname === item.path) ||
+            (item.label === 'Course Management' && isCourseActive);
 
-          {/* Admin Management */}
-          <Link
-            to="/admin/admin-management"
-            className={`flex items-center gap-[15px] px-[43px] py-[10px] h-[44px] rounded-[18px] cursor-pointer ${location.pathname === '/admin/admin-management'
-              ? 'bg-[#FFB300]'
-              : 'hover:bg-[#FFE29D]'
-              }`}
-          >
-            <FaUserCog className="w-[24px] h-[24px] text-[#0A0A0A]" />
-            <span className="text-[#0A0A0A] text-[16px] font-[400] tracking-[0.02em] leading-[100%]">
-              Admin Management
-            </span>
-          </Link>
+          if (item.isStatic) {
+            return (
+              <div
+                key={item.label}
+                className={`flex items-center gap-4 px-6 py-3.5 rounded-[15px] transition-all duration-300 ${isActive
+                  ? 'bg-[#FF9D00] text-white shadow-[0px_4px_10px_rgba(255,157,0,0.3)]'
+                  : 'text-gray-700'
+                  } cursor-default`}
+              >
+                <span className={isActive ? 'text-white' : 'text-gray-600'}>
+                  {item.icon}
+                </span>
+                <span className={`text-[15px] font-semibold tracking-wide ${isActive ? 'text-white' : 'text-gray-700'
+                  }`}>
+                  {item.label}
+                </span>
+              </div>
+            );
+          }
 
-          {/* User Management */}
-          <Link
-            to="/admin/user-management"
-            className={`flex items-center gap-[15px] px-[43px] py-[10px] h-[44px] rounded-[18px] cursor-pointer ${location.pathname === '/admin/user-management'
-              ? 'bg-[#FFB300]'
-              : 'hover:bg-[#FFE29D]'
-              }`}
-          >
-            <FaUsers className="w-[24px] h-[24px] text-[#0A0A0A]" />
-            <span className="text-[#0A0A0A] text-[16px] font-[400] tracking-[0.02em] leading-[100%]">
-              User Management
-            </span>
-          </Link>
+          return (
+            <Link
+              key={item.label}
+              to={item.path || '#'}
+              className={`flex items-center gap-4 px-6 py-3.5 rounded-[15px] transition-all duration-300 ${isActive
+                ? 'bg-[#FF9D00] text-white shadow-[0px_4px_10px_rgba(255,157,0,0.3)]'
+                : 'text-gray-700 hover:bg-[#FFB30020]'
+                }`}
+            >
+              <span className={isActive ? 'text-white' : 'text-gray-600'}>
+                {item.icon}
+              </span>
+              <span className={`text-[15px] font-semibold tracking-wide ${isActive ? 'text-white' : 'text-gray-700'
+                }`}>
+                {item.label}
+              </span>
+            </Link>
+          );
+        })}
+      </div>
 
-          {/* Course Management */}
-          <Link
-            to="/admin/course-management"
-            className={`flex items-center gap-[15px] px-[43px] py-[10px] h-[44px] rounded-[18px] cursor-pointer ${location.pathname === '/admin/course-management'
-                ? 'bg-[#FFB300]'
-                : 'hover:bg-[#FFE29D]'
-              }`}
-          >
-            <FaChalkboardTeacher className="w-[24px] h-[24px] text-[#0A0A0A]" />
-            <span className="text-[#0A0A0A] text-[16px] font-[400] tracking-[0.02em] leading-[100%]">
-              Course Management
-            </span>
-          </Link>
+      {/* Bottom Nav Links */}
+      <div className="px-6 flex flex-col gap-2 pb-8">
+        {bottomItems.map((item) => {
+          const isActive = location.pathname === item.path;
 
-          {/* Progress Tracking */}
-          {/* <div className="flex items-center gap-[15px] px-[43px] py-[10px] h-[44px] rounded-[18px] hover:bg-[#FFE29D] cursor-pointer">
-            <FaChartBar className="w-[24px] h-[24px] text-[#0A0A0A]" />
-            <span className="text-[#0A0A0A] text-[16px] font-[400] tracking-[0.02em] leading-[100%]">
-              Progress Tracking
-            </span>
-          </div> */}
+          if (item.path) {
+            return (
+              <Link
+                key={item.label}
+                to={item.path}
+                className={`flex items-center gap-4 px-6 py-3 rounded-[15px] transition-all duration-300 ${isActive
+                  ? 'bg-[#FF9D00] text-white shadow-md'
+                  : 'text-gray-700 hover:bg-[#FFB30020]'
+                  }`}
+              >
+                <span className={isActive ? 'text-white' : 'text-gray-500'}>
+                  {item.icon}
+                </span>
+                <span className={`text-[15px] font-semibold ${isActive ? 'text-white' : 'text-gray-700'}`}>
+                  {item.label}
+                </span>
+              </Link>
+            );
+          } else {
+            return (
+              <div
+                key={item.label}
+                onClick={item.action}
+                className="flex items-center gap-4 px-6 py-3 text-gray-700 hover:text-[#FF9D00] cursor-pointer group transition-all"
+              >
+                <span className="text-gray-500 group-hover:text-[#FF9D00] transition-colors">
+                  {item.icon}
+                </span>
+                <span className="text-[15px] font-semibold">{item.label}</span>
+              </div>
+            );
+          }
+        })}
 
-          {/* Progress Tracking */}
-          <Link
-            to="/admin/progress-tracking"
-            className={`flex items-center gap-[15px] px-[43px] py-[10px] h-[44px] rounded-[18px] cursor-pointer ${location.pathname === '/admin/progress-tracking'
-              ? 'bg-[#FFB300]'
-              : 'hover:bg-[#FFE29D]'
-              }`}
-          >
-            <FaChartBar className="w-[24px] h-[24px] text-[#0A0A0A]" />
-            <span className="text-[#0A0A0A] text-[16px] font-[400] tracking-[0.02em] leading-[100%]">
-              Progress Tracking
-            </span>
-          </Link>
-
-          {/* Feedback */}
-          <div className="flex items-center gap-[15px] px-[43px] py-[10px] h-[44px] rounded-[18px] hover:bg-[#FFE29D] cursor-pointer">
-            <FaCommentDots className="w-[24px] h-[24px] text-[#0A0A0A]" />
-            <span className="text-[#0A0A0A] text-[16px] font-[400] tracking-[0.02em] leading-[100%]">
-              Feedback
-            </span>
-          </div>
-        </div>
-
-        {/* Bottom Nav Links + Backup Info */}
-        <div className="mt-auto px-4 flex flex-col gap-[20px]">
-          {/* Profile */}
-          <div className="flex items-center gap-[15px] px-[43px] py-[10px] h-[44px] rounded-[18px] hover:bg-[#FFE29D] cursor-pointer">
-            <FaUser className="w-[24px] h-[24px] text-[#0A0A0A]" />
-            <span className="text-[#0A0A0A] text-[16px] font-[400] tracking-[0.02em] leading-[100%]">
-              Profile
-            </span>
-          </div>
-
-          {/* Settings */}
-          <div className="flex items-center gap-[15px] px-[43px] py-[10px] h-[44px] rounded-[18px] hover:bg-[#FFE29D] cursor-pointer">
-            <FaCog className="w-[24px] h-[24px] text-[#0A0A0A]" />
-            <span className="text-[#0A0A0A] text-[16px] font-[400] tracking-[0.02em] leading-[100%]">
-              Settings
-            </span>
-          </div>
-
-          {/* Logout */}
-          <div className="flex items-center gap-[15px] px-[43px] py-[10px] h-[44px] rounded-[18px] hover:bg-[#FFE29D] cursor-pointer">
-            <FaSignOutAlt className="w-[24px] h-[24px] text-[#0A0A0A]" />
-            <span className="text-[#0A0A0A] text-[16px] font-[400] tracking-[0.02em] leading-[100%]">
-              Log Out
-            </span>
-          </div>
-
-          {/* Last Backup Info */}
-          <div className="text-center mt-5 pb-4">
-            <p className="text-[10px] font-medium opacity-70 tracking-[0.02em] text-[#0A0A0A] leading-[100%]">
-              Last backuped
-            </p>
-            <p className="text-[10px] font-normal opacity-70 tracking-[0.02em] text-[#0A0A0A] leading-[100%]">
-              June 08 2025, 11:45pm
-            </p>
-          </div>
+        {/* Backup Info */}
+        <div className="text-center mt-6">
+          <p className="text-[9px] text-gray-400 font-medium uppercase tracking-[0.2em]">Last Backup</p>
+          <p className="text-[10px] text-gray-400 font-semibold mt-0.5">April 03 2025, 12:45pm</p>
         </div>
       </div>
     </div>
   );
 };
+
 
 export default HeaderC;

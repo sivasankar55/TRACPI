@@ -14,6 +14,12 @@ const courseSchema = new mongoose.Schema({
   sections: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Section'
+  }],
+  questions: [{
+    question: String,
+    options: [String],
+    correctAnswer: String,
+    type: String
   }]
 }, { timestamps: true });
 

@@ -4,11 +4,17 @@ import {
   getAllCourses,
   getCourseById,
   updateCourseById,
-  deleteCourseById
+  deleteCourseById,
+  getCourseStats,
+  getAllCoursesWithGlobalStats
 } from '../controllers/courseController.js';
 
 const router = express.Router();
 
+// Get stats
+router.get('/stats', getCourseStats);
+// Get specific admin stats view
+router.get('/stats-with-courses', getAllCoursesWithGlobalStats);
 // Create a new course
 router.post('/', createCourse);
 // Get all courses
